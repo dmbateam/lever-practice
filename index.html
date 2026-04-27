@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Lever — Solo Practice</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: linear-gradient(160deg, #f5f0e8 0%, #eee8da 100%);
+  color: #1a1a1a; font-family: 'Inter', system-ui, sans-serif;
+  min-height: 100vh; line-height: 1.5;
+}
+.hidden { display: none !important; }
+.container { max-width: 760px; margin: 0 auto; padding: 24px; }
+em { font-style: italic; }
+strong { font-weight: 700; }
+
+h1, h2, h3, h4 { font-weight: 700; line-height: 1.25; }
+h1 { font-size: 1.8rem; letter-spacing: -0.01em; }
+h2 { font-size: 1.1rem; color: #555; font-weight: 500; margin-top: 4px; }
+h3 { font-size: 0.85rem; margin-bottom: 12px; letter-spacing: 0.04em;
+  display: inline; background: linear-gradient(transparent 55%, #fde68a 55%); padding: 0 4px;
+}
+
+.card {
+  border: 2px solid #444; border-radius: 14px; padding: 22px;
+  margin-bottom: 16px; background: #fff;
+  box-shadow: 3px 3px 0 #ccc5b8;
+}
+.card label { display: block; font-weight: 600; font-size: 0.92rem; margin-bottom: 12px; }
+
+button, .btn {
+  background: transparent; border: 2px solid #555;
+  padding: 10px 28px; font-family: 'Inter', system-ui, sans-serif;
+  letter-spacing: 0.04em; cursor: pointer;
+  font-size: 0.85rem; font-weight: 600; color: #1a1a1a;
+  border-radius: 10px; transition: all 0.15s;
+  box-shadow: 2px 2px 0 #ccc5b8;
+}
+button:hover { transform: translate(-1px, -1px); box-shadow: 3px 3px 0 #ccc5b8; }
+button:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 #ccc5b8; }
+button:disabled { opacity: 0.35; cursor: not-allowed; pointer-events: none; }
+button.primary {
+  background: #2563EB; color: #fff; border: 2.5px solid #1a1a1a;
+  box-shadow: 3px 3px 0 #1a1a1a;
+}
+button.primary:hover { background: #1d4ed8; color: #fff; box-shadow: 5px 5px 0 #1a1a1a; }
+button.primary:active { box-shadow: 1px 1px 0 #1a1a1a; }
+
+textarea, input[type="text"], input[type="email"] {
+  width: 100%; padding: 12px 14px; border: 2px solid #d0ccc4; border-radius: 10px;
+  font-family: 'Inter', system-ui, sans-serif; font-size: 0.92rem;
+  outline: none; transition: border-color 0.15s; line-height: 1.55;
+}
+textarea { min-height: 80px; resize: vertical; }
+textarea:focus, input:focus { border-color: #2563EB; }
+
+/* ===== Intro ===== */
+.intro-inner {
+  background: #fff; border-radius: 16px; padding: 56px 48px 48px;
+  border: 2.5px solid #444; box-shadow: 4px 4px 0 #ccc5b8;
+  max-width: 480px; margin: 0 auto; text-align: center;
+  transform: rotate(-0.6deg);
+}
+.intro-the { font-size: 1rem; color: #888; font-weight: 400; margin-bottom: 4px; letter-spacing: 0.08em; }
+.intro-title {
+  font-size: clamp(36px, 7vw, 52px); font-weight: 800; color: #1a1a1a;
+  line-height: 1.05; letter-spacing: -0.02em;
+}
+.intro-title-highlight { background: linear-gradient(transparent 50%, #fde68a 50%); padding: 0 6px; }
+.intro-rule { height: 3px; border-radius: 2px; background: #2563EB; width: 60px; margin: 20px auto 18px; }
+.intro-subtitle { font-size: 0.92rem; color: #666; font-weight: 500; margin-bottom: 32px; letter-spacing: 0.02em; line-height: 1.55; }
+.intro-badge {
+  display: inline-block; background: #fde68a; border: 1.5px solid #d4a800; border-radius: 20px;
+  padding: 4px 14px; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.06em; margin-bottom: 24px; color: #7c6600;
+}
+
+/* ===== Registration ===== */
+.register-inner {
+  background: #fff; border-radius: 16px; padding: 44px;
+  border: 2.5px solid #444; box-shadow: 4px 4px 0 #ccc5b8;
+  max-width: 540px; margin: 0 auto;
+}
+.register-inner h1 {
+  font-size: 1.35rem; font-weight: 800; text-align: center;
+  display: inline-block; background: linear-gradient(transparent 55%, #fde68a 55%); padding: 0 4px;
+}
+.register-inner .reg-header { text-align: center; margin-bottom: 8px; }
+.reg-subtitle { font-size: 0.88rem; color: #666; margin-bottom: 28px; text-align: center; }
+.reg-section-title { font-size: 0.78rem; font-weight: 700; letter-spacing: 0.06em; color: #2563EB; margin-bottom: 12px; }
+.checklist { list-style: none; }
+.checklist li {
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 14px 16px; margin-bottom: 8px;
+  border: 2px solid #e0dcd4; border-radius: 10px; background: #fff;
+  cursor: pointer; transition: all 0.15s; user-select: none;
+}
+.checklist li:hover { background: #faf6ef; border-color: #aaa; }
+.checklist li.checked { border-color: #2563EB; background: #eff6ff; }
+.check-box {
+  width: 22px; height: 22px; border: 2px solid #888; border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; margin-top: 1px; font-size: 0.82rem; color: transparent;
+}
+.checklist li.checked .check-box { background: #2563EB; border-color: #2563EB; color: #fff; }
+.check-text { font-size: 0.88rem; line-height: 1.5; color: #1a1a1a; }
+.check-text small { display: block; font-size: 0.78rem; color: #888; margin-top: 2px; }
+.form-error { color: #d00; font-size: 0.84rem; margin: 10px 0; display: none; text-align: center; }
+
+/* ===== Scenario picker ===== */
+.scenario-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; }
+.scenario-card {
+  border: 2px solid #d0ccc4; border-radius: 12px; padding: 18px;
+  background: #fff; cursor: pointer; transition: all 0.15s;
+  box-shadow: 2px 2px 0 #e8e4dc;
+}
+.scenario-card:hover { border-color: #2563EB; transform: translate(-1px, -1px); box-shadow: 4px 4px 0 #ccc5b8; }
+.scenario-card .ind { font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; color: #2563EB; font-weight: 700; margin-bottom: 6px; }
+.scenario-card .nm { font-weight: 800; font-size: 1.1rem; margin-bottom: 4px; }
+.scenario-card .tg { font-size: 0.85rem; color: #555; line-height: 1.5; }
+
+/* ===== Situation ===== */
+.crisis-banner {
+  background: #fef3c7; border-left: 5px solid #d97706; border-radius: 8px;
+  padding: 16px 20px; margin: 14px 0 16px;
+}
+.crisis-label { font-size: 0.7rem; letter-spacing: 0.14em; text-transform: uppercase; font-weight: 700; color: #92400e; margin-bottom: 4px; }
+.crisis-metric { font-weight: 800; font-size: 1.1rem; margin-bottom: 4px; }
+.crisis-banner p { font-size: 0.92rem; line-height: 1.55; color: #444; }
+
+.character-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
+.character-card {
+  border: 2px solid #d0ccc4; border-radius: 10px; padding: 14px;
+  background: #faf6ef;
+}
+.character-card .c-name { font-weight: 700; font-size: 0.95rem; }
+.character-card .c-role { font-size: 0.78rem; color: #888; margin-bottom: 8px; }
+.character-card .c-quote { font-size: 0.86rem; color: #444; font-style: italic; line-height: 1.5; }
+
+.hero-wrap { margin: 0 -22px 12px; }
+.hero-wrap img { width: 100%; height: auto; display: block; }
+.hero-caption { font-size: 0.78rem; color: #888; margin-bottom: 12px; }
+
+table.data-table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+table.data-table td { padding: 8px 4px; border-bottom: 1px solid #e8e4dc; vertical-align: top; }
+table.data-table td:first-child { width: 55%; }
+
+/* ===== Decide ===== */
+.option-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px; margin-bottom: 14px; }
+.option-card {
+  border: 2px solid #d0ccc4; border-radius: 10px; padding: 14px;
+  cursor: pointer; transition: all 0.15s; background: #fff;
+}
+.option-card:hover { border-color: #2563EB; }
+.option-card.selected { border-color: #2563EB; background: #eff6ff; box-shadow: 2px 2px 0 #2563EB; }
+.option-card .o-tag { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.1em; color: #2563EB; }
+.option-card .o-title { font-weight: 700; font-size: 0.92rem; margin: 4px 0; }
+.option-card .o-desc { font-size: 0.82rem; color: #555; line-height: 1.45; }
+
+.lever-list { display: flex; flex-direction: column; gap: 10px; }
+.lever-item {
+  border: 2px solid #d0ccc4; border-radius: 10px; padding: 12px 14px;
+  cursor: pointer; transition: all 0.15s; background: #fff;
+}
+.lever-item:hover { border-color: #2563EB; }
+.lever-item.selected { border-color: #2563EB; background: #eff6ff; box-shadow: 2px 2px 0 #2563EB; }
+.lever-item .l-title { font-weight: 700; font-size: 0.92rem; margin-bottom: 4px; }
+.lever-item .l-desc { font-size: 0.82rem; color: #555; line-height: 1.45; }
+.lever-hint { font-size: 0.82rem; color: #888; }
+
+/* ===== 3-month / 12-month reveal ===== */
+.consequence {
+  background: #fff; border: 2px solid #444; border-radius: 14px;
+  padding: 22px; box-shadow: 3px 3px 0 #ccc5b8; margin-bottom: 16px;
+}
+.consequence p { font-size: 0.92rem; line-height: 1.6; margin-bottom: 10px; }
+.consequence .but { display: inline-block; background: #fde68a; padding: 0 6px; font-weight: 700; }
+.metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px; margin-top: 14px; }
+.metric {
+  border: 2px solid #d0ccc4; border-radius: 8px; padding: 10px 12px; background: #faf6ef;
+}
+.metric.success { border-color: #1a8a4a; background: #e6f5ea; }
+.metric.danger { border-color: #c0392b; background: #fbeae6; }
+.metric .m-label { font-size: 0.72rem; color: #555; letter-spacing: 0.05em; text-transform: uppercase; font-weight: 600; }
+.metric .m-value { font-size: 1.1rem; font-weight: 700; margin-top: 2px; }
+
+.your-pick {
+  background: #eff6ff; border-left: 5px solid #2563EB; border-radius: 8px;
+  padding: 14px 18px; margin-bottom: 16px;
+}
+.your-pick .y-label { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.14em; color: #2563EB; }
+.your-pick .y-line { font-size: 0.95rem; margin-top: 4px; }
+.your-pick .y-reasoning { font-size: 0.88rem; margin-top: 8px; color: #555; font-style: italic; }
+
+.scenes-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px;
+}
+.scene {
+  background: #fff8e1; border-left: 4px solid #fde68a; border-radius: 6px;
+  padding: 16px; font-size: 0.92rem; line-height: 1.55; color: #333;
+}
+.scene-heading {
+  font-size: 0.7rem; letter-spacing: 0.14em; text-transform: uppercase;
+  color: #92400e; font-weight: 700; margin-bottom: 8px;
+}
+.scene.takeaway { background: #fde68a; border-left-color: #d97706; font-weight: 500; }
+.scene.takeaway .scene-heading { color: #78350f; }
+
+/* ===== Reflection ===== */
+.reflection-form { text-align: left; }
+.reflection-form h2 {
+  font-size: 1.2rem; font-weight: 800; text-align: center;
+  display: inline-block; background: linear-gradient(transparent 55%, #fde68a 55%); padding: 0 4px;
+  color: #1a1a1a; margin-top: 0;
+}
+.reflection-form .ref-header { text-align: center; margin-bottom: 4px; }
+.reflection-form .ref-subtitle { font-size: 0.85rem; color: #666; text-align: center; margin-bottom: 24px; }
+.ref-group { margin-bottom: 18px; }
+.ref-group label { display: block; font-size: 0.88rem; font-weight: 600; margin-bottom: 6px; }
+.ref-group label small { font-weight: 400; color: #888; }
+.ref-slider-row { display: flex; align-items: center; gap: 12px; }
+.ref-slider-row input[type="range"] { flex: 1; accent-color: #2563EB; }
+.ref-slider-val { font-weight: 700; font-size: 0.95rem; min-width: 28px; text-align: center; color: #2563EB; }
+.ref-slider-labels { display: flex; justify-content: space-between; font-size: 0.72rem; color: #888; margin-top: 2px; }
+.ref-success {
+  text-align: center; padding: 32px 24px;
+  border: 2px solid #2ECC71; border-radius: 12px; background: #f0fdf4;
+}
+.ref-success h3 { color: #15803d; background: none; display: block; font-size: 1.1rem; margin-bottom: 8px; }
+.ref-success p { font-size: 0.9rem; color: #444; line-height: 1.55; }
+
+/* ===== Status bar shown during gameplay ===== */
+.status-bar {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 10px 0; margin-bottom: 14px; font-size: 0.82rem;
+  border-bottom: 2px solid #555; letter-spacing: 0.03em;
+}
+.status-bar .step-pill {
+  background: #2563EB; color: #fff; padding: 3px 10px; border-radius: 12px;
+  font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em;
+}
+
+@media (max-width: 600px) {
+  .intro-inner { padding: 36px 24px; }
+  .register-inner { padding: 28px 22px; }
+  .container { padding: 16px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ===== INTRO ===== -->
+<div id="screen-intro">
+  <div class="container" style="display:flex;align-items:center;justify-content:center;min-height:100vh;">
+    <div class="intro-inner">
+      <div class="intro-badge">SOLO PRACTICE</div>
+      <div class="intro-the">the</div>
+      <div class="intro-title"><span class="intro-title-highlight">Lever</span></div>
+      <div class="intro-rule"></div>
+      <div class="intro-subtitle">A business is broken. You have one decision to make. Diagnose the root cause, pick your levers, and see what holds up over 12 months.</div>
+      <button class="primary" style="padding:16px 56px;font-size:1rem;" onclick="showScreen('screen-register')">Begin</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== REGISTRATION ===== -->
+<div id="screen-register" class="hidden">
+  <div class="container" style="display:flex;align-items:center;justify-content:center;min-height:100vh;">
+    <div class="register-inner">
+      <div class="reg-header"><h1>Before you play</h1></div>
+      <p class="reg-subtitle">Make sure you're prepared, then jump in.</p>
+
+      <div class="reg-section-title">YOUR EMAIL</div>
+      <input type="email" id="reg-email" placeholder="you@example.com" autocomplete="email" style="margin-bottom: 4px;">
+
+      <div class="reg-section-title" style="margin-top:24px;">PRE-REQUISITE CHECKLIST</div>
+      <p style="font-size:0.82rem;color:#666;margin-bottom:12px;">To get the most from this game, you should have completed the following:</p>
+      <ul class="checklist" id="reg-checklist">
+        <li onclick="toggleCheck(this)" data-key="ondemand">
+          <div class="check-box">&#10003;</div>
+          <div class="check-text">
+            I've watched the on-demand content for this module
+            <small>The Business Models concepts and frameworks you'll apply in-game</small>
+          </div>
+        </li>
+        <li onclick="toggleCheck(this)" data-key="recording">
+          <div class="check-box">&#10003;</div>
+          <div class="check-text">
+            I've watched the first 90 minutes of the practice session recording
+            <small>The recap and Q&amp;A from live participants that sets the scene</small>
+          </div>
+        </li>
+      </ul>
+
+      <div id="reg-error" class="form-error">Please enter a valid email and check both items above.</div>
+      <button class="primary" style="width:100%;padding:14px 28px;margin-top:18px;" onclick="submitRegistration()">Continue &rarr;</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SCENARIO PICKER ===== -->
+<div id="screen-pick" class="hidden">
+  <div class="container">
+    <div class="status-bar">
+      <span class="step-pill">PICK A CASE</span>
+      <span style="color:#666;">Step 1 of 4</span>
+    </div>
+    <div class="card" style="text-align:center;">
+      <h1>Pick a company in crisis</h1>
+      <h2 style="margin-top:8px;">Each takes about 15 minutes. You can play another after this one.</h2>
+    </div>
+    <div class="scenario-grid" id="scenario-grid"></div>
+  </div>
+</div>
+
+<!-- ===== SITUATION ===== -->
+<div id="screen-situation" class="hidden">
+  <div class="container">
+    <div class="status-bar">
+      <span class="step-pill">SITUATION</span>
+      <span style="color:#666;">Step 2 of 4 · Read carefully</span>
+    </div>
+    <div class="card">
+      <h1 id="sit-name">—</h1>
+      <h2 id="sit-subtitle">—</h2>
+    </div>
+    <div class="card">
+      <h3>Company story</h3>
+      <div id="sit-hero"></div>
+      <p id="sit-story" style="font-size:0.92rem; line-height:1.65; margin-top:10px;"></p>
+    </div>
+    <div class="crisis-banner">
+      <div class="crisis-label">Crisis</div>
+      <div class="crisis-metric" id="sit-crisis-metric"></div>
+      <p id="sit-crisis-narrative"></p>
+    </div>
+    <div class="card">
+      <h3>Three theories</h3>
+      <div class="character-grid" id="sit-characters" style="margin-top:10px;"></div>
+    </div>
+    <div class="card">
+      <h3>Case data</h3>
+      <table class="data-table"><tbody id="sit-data"></tbody></table>
+    </div>
+    <button class="primary" style="width:100%;padding:14px 28px;" onclick="goToDecide()">Make your call &rarr;</button>
+  </div>
+</div>
+
+<!-- ===== DECIDE ===== -->
+<div id="screen-decide" class="hidden">
+  <div class="container">
+    <div class="status-bar">
+      <span class="step-pill">DIAGNOSE + ACT</span>
+      <span style="color:#666;">Step 3 of 4</span>
+    </div>
+    <div class="card">
+      <h1>Your call</h1>
+      <h2>Diagnose the root cause, then pick levers to act.</h2>
+    </div>
+    <div class="card">
+      <label>1. Root cause — which part of the business model is broken?</label>
+      <div class="option-grid" id="dx-options"></div>
+    </div>
+    <div class="card">
+      <label for="dx-reasoning">2. Why this is the root cause <small style="font-weight:400;color:#888;">(2–3 sentences)</small></label>
+      <textarea id="dx-reasoning" placeholder="Why is this the root cause, not just a symptom?"></textarea>
+    </div>
+    <div class="card">
+      <label>3. Pick 1–2 levers to pull</label>
+      <p class="lever-hint" id="lever-hint" style="margin-bottom:12px;">Pick your root cause first to see matching levers.</p>
+      <div class="lever-list" id="dx-levers"></div>
+    </div>
+    <div id="decide-error" class="form-error"></div>
+    <button class="primary" style="width:100%;padding:14px 28px;" onclick="submitDecide()">See what happens &rarr;</button>
+  </div>
+</div>
+
+<!-- ===== 3-MONTH RESULTS ===== -->
+<div id="screen-3month" class="hidden">
+  <div class="container">
+    <div class="status-bar">
+      <span class="step-pill">3 MONTHS LATER</span>
+      <span style="color:#666;">Step 4 of 4 · Short-term outcome</span>
+    </div>
+    <div class="your-pick">
+      <div class="y-label">YOUR CALL</div>
+      <div class="y-line" id="three-your-line"></div>
+      <div class="y-reasoning" id="three-your-reasoning"></div>
+    </div>
+    <div class="consequence">
+      <h3>What happened at 3 months</h3>
+      <div id="three-narrative" style="margin-top:10px;"></div>
+      <div class="metrics-grid" id="three-metrics"></div>
+    </div>
+    <button class="primary" style="width:100%;padding:14px 28px;" onclick="goTo12Month()">But what happens after 12 months? &rarr;</button>
+  </div>
+</div>
+
+<!-- ===== 12-MONTH REVEAL (all paths) ===== -->
+<div id="screen-12month" class="hidden">
+  <div class="container">
+    <div class="status-bar">
+      <span class="step-pill">12 MONTHS LATER</span>
+      <span style="color:#666;">All four paths</span>
+    </div>
+    <div class="card">
+      <h1>What held up</h1>
+      <h2>Short-term and long-term outcomes are different leaderboards. Here's how each diagnosis played out.</h2>
+    </div>
+    <div class="scenes-grid" id="twelve-scenes"></div>
+    <div class="card" style="margin-top:18px; background:#faf6ef;">
+      <h3>Your path</h3>
+      <p id="twelve-your-path" style="font-size:0.92rem; line-height:1.6; margin-top:10px;"></p>
+    </div>
+    <button class="primary" style="width:100%;padding:14px 28px;" onclick="goToReflect()">Submit your takeaways &rarr;</button>
+  </div>
+</div>
+
+<!-- ===== REFLECTION ===== -->
+<div id="screen-reflect" class="hidden">
+  <div class="container">
+    <div class="register-inner reflection-form">
+      <div class="ref-header"><h2>Your takeaways</h2></div>
+      <p class="ref-subtitle">Capture what you've learned — your answers will be sent to the d.MBA team and you'll receive a confirmation.</p>
+
+      <div class="ref-group">
+        <label>How confident are you now in spotting and diagnosing root-cause business model problems?</label>
+        <div class="ref-slider-row">
+          <input type="range" id="ref-confidence" min="1" max="10" value="5" oninput="document.getElementById('ref-conf-val').textContent=this.value">
+          <span class="ref-slider-val" id="ref-conf-val">5</span>
+        </div>
+        <div class="ref-slider-labels"><span>Not at all</span><span>Very confident</span></div>
+      </div>
+
+      <div class="ref-group">
+        <label>What was your biggest takeaway from this case?</label>
+        <textarea id="ref-takeaway" placeholder="e.g. I learned that the metric that looks broken isn't always the part of the business that's broken…"></textarea>
+      </div>
+
+      <div class="ref-group">
+        <label>How will you apply root-cause diagnosis in your own work? <small>(be specific)</small></label>
+        <textarea id="ref-application" placeholder="e.g. Before our next planning round I'll separate symptoms from structural issues by…"></textarea>
+      </div>
+
+      <div class="ref-group">
+        <label>What surprised you about the 12-month reveal?</label>
+        <textarea id="ref-surprise" placeholder="e.g. I expected the obvious fix to compound, but actually…"></textarea>
+      </div>
+
+      <div class="ref-group">
+        <label>Any other reflections or questions? <small>(optional)</small></label>
+        <textarea id="ref-other" placeholder="Anything else you'd like to share or ask…"></textarea>
+      </div>
+
+      <div id="ref-error" class="form-error">Please fill in at least the first three questions.</div>
+      <button class="primary" id="ref-submit-btn" style="width:100%;padding:14px 28px;" onclick="submitReflection()">Submit my takeaways &rarr;</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SUCCESS ===== -->
+<div id="screen-success" class="hidden">
+  <div class="container" style="display:flex;align-items:center;justify-content:center;min-height:100vh;">
+    <div class="register-inner" style="text-align:center;">
+      <div class="ref-success">
+        <h3>Submission received!</h3>
+        <p>Your takeaways and case results have been sent to the d.MBA team. A confirmation has been sent to <strong id="ref-confirm-email"></strong>.</p>
+      </div>
+      <button class="primary" style="margin-top:24px;padding:14px 36px;" onclick="playAgain()">Play another case &rarr;</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== Load scenarios ===== -->
+<script src="scenarios/plate_and_pour.js"></script>
+<script src="scenarios/gridline_saas.js"></script>
+<script src="scenarios/strideclub_fitness.js"></script>
+<script src="scenarios/nordweg_motor.js"></script>
+
+<script>
+// =====================================================================
+// EmailJS configuration
+// Reusing the d.MBA EmailJS service + public key from strategy-practice.
+// You must create TWO new templates in the EmailJS dashboard:
+//   1. Admin notification (sends results to admin@d.mba)
+//   2. Player confirmation (sends a copy to the player)
+// Then drop the IDs in below.
+// =====================================================================
+const EMAILJS_PUBLIC_KEY = 'C16RP8PBnTudO3pTa';
+const EMAILJS_SERVICE_ID = 'service_vgc4x29';
+const EMAILJS_ADMIN_TEMPLATE = 'TEMPLATE_ADMIN_LEVER';     // <-- TODO: replace with new EmailJS template ID
+const EMAILJS_CONFIRM_TEMPLATE = 'TEMPLATE_CONFIRM_LEVER'; // <-- TODO: replace with new EmailJS template ID
+const ADMIN_EMAIL = 'admin@d.mba';
+
+// =====================================================================
+// State
+// =====================================================================
+const SCENARIO_SLUGS = ['plate_and_pour', 'gridline_saas', 'strideclub_fitness', 'nordweg_motor'];
+let player = { email: '', scenarioSlug: null, diagnosis: null, leverIds: [], reasoning: '' };
+let checklistState = { ondemand: false, recording: false };
+
+function esc(s) {
+  return String(s ?? '').replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+}
+
+function showScreen(id) {
+  document.querySelectorAll('body > div[id^="screen-"]').forEach(s => s.classList.add('hidden'));
+  document.getElementById(id).classList.remove('hidden');
+  window.scrollTo({ top: 0 });
+}
+
+// =====================================================================
+// Registration
+// =====================================================================
+function toggleCheck(li) {
+  const key = li.dataset.key;
+  checklistState[key] = !checklistState[key];
+  li.classList.toggle('checked', checklistState[key]);
+}
+
+function submitRegistration() {
+  const email = document.getElementById('reg-email').value.trim();
+  const valid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  const allChecked = checklistState.ondemand && checklistState.recording;
+  const errEl = document.getElementById('reg-error');
+  if (!valid || !allChecked) { errEl.style.display = 'block'; return; }
+  errEl.style.display = 'none';
+  player.email = email;
+  buildScenarioGrid();
+  showScreen('screen-pick');
+}
+
+// =====================================================================
+// Scenario picker
+// =====================================================================
+function buildScenarioGrid() {
+  const grid = document.getElementById('scenario-grid');
+  grid.innerHTML = SCENARIO_SLUGS.map(slug => {
+    const s = window.SCENARIOS?.[slug];
+    if (!s) return '';
+    return `<div class="scenario-card" onclick="pickScenario('${slug}')">
+      <div class="ind">${esc(s.meta?.industry || '')}</div>
+      <div class="nm">${esc(s.meta?.display_name || s.company.name)}</div>
+      <div class="tg">${esc(s.meta?.tagline || '')}</div>
+    </div>`;
+  }).join('');
+}
+
+function pickScenario(slug) {
+  player.scenarioSlug = slug;
+  player.diagnosis = null;
+  player.leverIds = [];
+  player.reasoning = '';
+  renderSituation();
+  showScreen('screen-situation');
+}
+
+const S = () => window.SCENARIOS?.[player.scenarioSlug];
+
+// =====================================================================
+// Situation
+// =====================================================================
+function renderSituation() {
+  const s = S();
+  if (!s) return;
+  document.getElementById('sit-name').textContent = s.company.name;
+  document.getElementById('sit-subtitle').textContent = s.company.subtitle || '';
+  // Scenario JS files use absolute paths like '/images/foo.png' assuming the
+  // multiplayer FastAPI server's static mount. Here we host statically with
+  // images at root-relative './images/...', so strip the leading slash.
+  const rawImg = s.company.hero_image;
+  const heroImg = rawImg && rawImg.startsWith('/images/')
+    ? rawImg.slice(1)
+    : rawImg;
+  const heroCap = s.company.hero_caption;
+  document.getElementById('sit-hero').innerHTML = heroImg
+    ? `<div class="hero-wrap"><img src="${esc(heroImg)}" alt="${esc(s.company.name)}" /></div>${heroCap ? `<div class="hero-caption">${esc(heroCap)}</div>` : ''}`
+    : '';
+  document.getElementById('sit-story').innerHTML = s.company.founding_story || '';
+  document.getElementById('sit-crisis-metric').textContent =
+    `${s.crisis.metric_label || 'Metric'}: ${s.crisis.before} → ${s.crisis.after}`;
+  document.getElementById('sit-crisis-narrative').textContent = s.crisis.narrative || s.crisis.recap_crisis || '';
+
+  document.getElementById('sit-characters').innerHTML = (s.characters || []).map(c => `
+    <div class="character-card">
+      <div class="c-name">${esc(c.name)}</div>
+      <div class="c-role">${esc(c.role || '')}</div>
+      <div class="c-quote">"${esc(c.crisis_quote || c.description || '')}"</div>
+    </div>`).join('');
+
+  const data = s.data_table || (s.crisis && s.crisis.data) || [];
+  document.getElementById('sit-data').innerHTML = data.map(row => `
+    <tr><td><strong>${esc(row.fact || row.label || '')}</strong></td><td>${esc(row.numbers || row.value || '')}</td></tr>
+  `).join('');
+}
+
+function goToDecide() {
+  renderDecide();
+  showScreen('screen-decide');
+}
+
+// =====================================================================
+// Decide
+// =====================================================================
+function renderDecide() {
+  const s = S();
+  if (!s) return;
+  const labels = s.diagnosis_labels || {};
+  const opts = s.diagnosis_options || [];
+  document.getElementById('dx-options').innerHTML = opts.map(o => {
+    const k = o.dimension;
+    const lbl = labels[k]?.tag || k.toUpperCase();
+    const sel = player.diagnosis === k ? ' selected' : '';
+    return `<div class="option-card${sel}" data-dx="${esc(k)}" onclick="selectDx('${esc(k)}')">
+      <div class="o-tag">${esc(lbl)}</div>
+      <div class="o-title">${esc(o.title || '')}</div>
+      <div class="o-desc">${esc(o.description || '')}</div>
+    </div>`;
+  }).join('');
+  document.getElementById('dx-reasoning').value = player.reasoning || '';
+  renderLeversForDx();
+}
+
+function selectDx(k) {
+  if (player.diagnosis !== k) {
+    player.diagnosis = k;
+    player.leverIds = [];
+  }
+  document.querySelectorAll('#dx-options .option-card').forEach(n => {
+    n.classList.toggle('selected', n.dataset.dx === k);
+  });
+  renderLeversForDx();
+}
+
+function renderLeversForDx() {
+  const s = S();
+  const list = document.getElementById('dx-levers');
+  const hint = document.getElementById('lever-hint');
+  if (!player.diagnosis) {
+    list.innerHTML = '';
+    hint.style.display = 'block';
+    return;
+  }
+  hint.style.display = 'none';
+  const levers = (s.levers && s.levers[player.diagnosis]) || [];
+  list.innerHTML = levers.map(l => {
+    const sel = player.leverIds.includes(l.id) ? ' selected' : '';
+    return `<div class="lever-item${sel}" data-lid="${esc(l.id)}" onclick="toggleLever('${esc(l.id)}')">
+      <div class="l-title">${esc(l.title)}</div>
+      <div class="l-desc">${esc(l.desc || '')}</div>
+    </div>`;
+  }).join('');
+}
+
+function toggleLever(id) {
+  const i = player.leverIds.indexOf(id);
+  if (i >= 0) player.leverIds.splice(i, 1);
+  else {
+    if (player.leverIds.length >= 2) { alert('Pick at most 2 levers.'); return; }
+    player.leverIds.push(id);
+  }
+  document.querySelectorAll('#dx-levers .lever-item').forEach(n => {
+    n.classList.toggle('selected', player.leverIds.includes(n.dataset.lid));
+  });
+}
+
+function submitDecide() {
+  const errEl = document.getElementById('decide-error');
+  const reasoning = document.getElementById('dx-reasoning').value.trim();
+  if (!player.diagnosis) { errEl.textContent = 'Pick a root cause.'; errEl.style.display = 'block'; return; }
+  if (reasoning.length < 10) { errEl.textContent = 'Please add reasoning (at least 10 characters).'; errEl.style.display = 'block'; return; }
+  if (!player.leverIds.length) { errEl.textContent = 'Pick at least one lever.'; errEl.style.display = 'block'; return; }
+  errEl.style.display = 'none';
+  player.reasoning = reasoning;
+  render3Month();
+  showScreen('screen-3month');
+}
+
+// =====================================================================
+// 3-month consequence
+// =====================================================================
+function leverTitle(id) {
+  const s = S();
+  if (!s?.levers) return id;
+  for (const arr of Object.values(s.levers)) {
+    const l = (arr || []).find(x => x.id === id);
+    if (l) return l.title;
+  }
+  return id;
+}
+
+function render3Month() {
+  const s = S();
+  if (!s) return;
+  const labels = s.diagnosis_labels || {};
+  const c = s.consequences && s.consequences[player.diagnosis];
+  const dxLabel = labels[player.diagnosis]?.name || labels[player.diagnosis]?.tag || player.diagnosis.toUpperCase();
+  document.getElementById('three-your-line').innerHTML =
+    `<strong>${esc(dxLabel)}</strong> &middot; ${player.leverIds.map(id => esc(leverTitle(id))).join(' + ') || '—'}`;
+  document.getElementById('three-your-reasoning').textContent = `"${player.reasoning}"`;
+
+  const narrEl = document.getElementById('three-narrative');
+  narrEl.innerHTML = c?.narrative || '<p>(No 3-month narrative configured for this diagnosis.)</p>';
+
+  const metrics = c?.metrics || [];
+  document.getElementById('three-metrics').innerHTML = metrics.map(m => `
+    <div class="metric ${m.status || 'neutral'}">
+      <div class="m-label">${esc(m.label)}</div>
+      <div class="m-value">${esc(m.value)}</div>
+    </div>`).join('');
+}
+
+function goTo12Month() {
+  render12Month();
+  showScreen('screen-12month');
+}
+
+// =====================================================================
+// 12-month all-paths reveal
+// =====================================================================
+function render12Month() {
+  const s = S();
+  if (!s) return;
+  const scenes = s.long_term_scenes || [];
+  if (scenes.length) {
+    document.getElementById('twelve-scenes').innerHTML = scenes.map((sc, i) => {
+      const last = i === scenes.length - 1;
+      return `<div class="scene${last ? ' takeaway' : ''}">
+        <div class="scene-heading">${esc(sc.heading || '')}</div>
+        <div>${sc.body || ''}</div>
+      </div>`;
+    }).join('');
+  } else {
+    document.getElementById('twelve-scenes').innerHTML =
+      `<div class="scene takeaway">${s.long_term_reveal_note || ''}</div>`;
+  }
+
+  const labels = s.diagnosis_labels || {};
+  const dxLabel = labels[player.diagnosis]?.name || labels[player.diagnosis]?.tag || player.diagnosis.toUpperCase();
+  const c = s.consequences && s.consequences[player.diagnosis];
+  const currency = s.company.currency_symbol || '£';
+  const baselineK = Math.round((s.company.baseline_mrr || 0) / 1000);
+  const mrr3K = Math.round((c?.mrr || 0) / 1000);
+  const mrr12K = Math.round((c?.mrr12 || 0) / 1000);
+  const delta = mrr12K - baselineK;
+  const deltaStr = delta >= 0 ? `+${currency}${delta}K` : `-${currency}${Math.abs(delta)}K`;
+  document.getElementById('twelve-your-path').innerHTML =
+    `You backed <strong>${esc(dxLabel)}</strong> with ${player.leverIds.map(id => `<em>${esc(leverTitle(id))}</em>`).join(' + ') || 'no levers'}. ` +
+    `Revenue: ${currency}${mrr3K}K/mo at 3 months → ${currency}${mrr12K}K/mo at 12 months (vs baseline ${currency}${baselineK}K, ${deltaStr}).`;
+}
+
+function goToReflect() {
+  showScreen('screen-reflect');
+}
+
+// =====================================================================
+// Reflection + email
+// =====================================================================
+function buildReflectionPayload() {
+  const s = S();
+  const labels = s?.diagnosis_labels || {};
+  const dxLabel = labels[player.diagnosis]?.name || player.diagnosis;
+  const c = s?.consequences && s.consequences[player.diagnosis];
+  const currency = s?.company.currency_symbol || '£';
+  const baselineK = Math.round((s?.company.baseline_mrr || 0) / 1000);
+  const mrr3K = Math.round((c?.mrr || 0) / 1000);
+  const mrr12K = Math.round((c?.mrr12 || 0) / 1000);
+  const leversText = player.leverIds.map(id => leverTitle(id)).join(' + ') || '(none)';
+
+  const summary =
+    `Scenario: ${s?.meta?.display_name || player.scenarioSlug}\n` +
+    `Industry: ${s?.meta?.industry || 'n/a'}\n` +
+    `Diagnosis: ${dxLabel}\n` +
+    `Levers: ${leversText}\n` +
+    `Reasoning: ${player.reasoning}\n` +
+    `Outcome: ${currency}${mrr3K}K/mo @ 3mo → ${currency}${mrr12K}K/mo @ 12mo (baseline ${currency}${baselineK}K)`;
+
+  return {
+    student_email: player.email,
+    scenario: s?.meta?.display_name || player.scenarioSlug,
+    diagnosis: dxLabel,
+    levers: leversText,
+    reasoning: player.reasoning,
+    summary,
+    confidence: document.getElementById('ref-confidence').value + '/10',
+    takeaway: document.getElementById('ref-takeaway').value.trim(),
+    application: document.getElementById('ref-application').value.trim(),
+    surprise: document.getElementById('ref-surprise').value.trim(),
+    other: document.getElementById('ref-other').value.trim() || '(none)',
+  };
+}
+
+function submitReflection() {
+  const errEl = document.getElementById('ref-error');
+  const takeaway = document.getElementById('ref-takeaway').value.trim();
+  const application = document.getElementById('ref-application').value.trim();
+  const surprise = document.getElementById('ref-surprise').value.trim();
+  if (!takeaway || !application || !surprise) { errEl.style.display = 'block'; return; }
+  errEl.style.display = 'none';
+
+  const payload = buildReflectionPayload();
+  const btn = document.getElementById('ref-submit-btn');
+  btn.disabled = true;
+  btn.textContent = 'Sending…';
+
+  const adminTemplateUnset = EMAILJS_ADMIN_TEMPLATE.startsWith('TEMPLATE_ADMIN');
+  if (adminTemplateUnset) {
+    console.warn('EmailJS templates not yet configured. Payload would have been:', payload);
+    showSuccess();
+    return;
+  }
+
+  emailjs.init(EMAILJS_PUBLIC_KEY);
+  Promise.all([
+    emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_ADMIN_TEMPLATE, { ...payload, to_email: ADMIN_EMAIL }),
+    emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_CONFIRM_TEMPLATE, { ...payload, to_email: player.email }),
+  ])
+    .then(() => showSuccess())
+    .catch(err => {
+      console.error('Email send failed:', err);
+      // Show success anyway — the d.MBA pattern is to never block the player on a transient mail failure.
+      showSuccess();
+    });
+}
+
+function showSuccess() {
+  document.getElementById('ref-confirm-email').textContent = player.email;
+  showScreen('screen-success');
+}
+
+function playAgain() {
+  player = { email: player.email, scenarioSlug: null, diagnosis: null, leverIds: [], reasoning: '' };
+  buildScenarioGrid();
+  showScreen('screen-pick');
+}
+</script>
+</body>
+</html>
