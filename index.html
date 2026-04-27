@@ -483,17 +483,17 @@ table.data-table td:first-child { width: 55%; }
 <script>
 // =====================================================================
 // EmailJS configuration
-// Reusing the d.MBA EmailJS service + public key from strategy-practice.
-// You must create TWO new templates in the EmailJS dashboard:
-//   1. Admin notification (sends results to admin@d.mba)
-//   2. Player confirmation (sends a copy to the player)
-// Then drop the IDs in below.
+// Shared with strategy-practice — both games hit the SAME pair of templates
+// (admin + player confirmation). Each game distinguishes itself by sending
+// `game_name` and a `game_summary` blob, which the templates render verbatim.
+// This keeps us on the EmailJS free tier without needing per-game templates.
 // =====================================================================
 const EMAILJS_PUBLIC_KEY = 'C16RP8PBnTudO3pTa';
 const EMAILJS_SERVICE_ID = 'service_vgc4x29';
-const EMAILJS_ADMIN_TEMPLATE = 'TEMPLATE_ADMIN_LEVER';     // <-- TODO: replace with new EmailJS template ID
-const EMAILJS_CONFIRM_TEMPLATE = 'TEMPLATE_CONFIRM_LEVER'; // <-- TODO: replace with new EmailJS template ID
+const EMAILJS_ADMIN_TEMPLATE = 'template_04i67k6';
+const EMAILJS_CONFIRM_TEMPLATE = 'template_fwackuq';
 const ADMIN_EMAIL = 'admin@d.mba';
+const GAME_NAME = 'The Lever';
 
 // =====================================================================
 // State
@@ -569,8 +569,8 @@ function renderSituation() {
   document.getElementById('sit-name').textContent = s.company.name;
   document.getElementById('sit-subtitle').textContent = s.company.subtitle || '';
   // Scenario JS files use absolute paths like '/images/foo.png' assuming the
-  // multiplayer FastAPI server's static mount. Here we host statically with
-  // images at root-relative './images/...', so strip the leading slash.
+  // multiplayer FastAPI server's static mount. Solo is hosted statically (e.g.
+  // Here we host statically with images at root-relative './images/...', so strip the leading slash.
   const rawImg = s.company.hero_image;
   const heroImg = rawImg && rawImg.startsWith('/images/')
     ? rawImg.slice(1)
@@ -770,7 +770,7 @@ function buildReflectionPayload() {
   const mrr12K = Math.round((c?.mrr12 || 0) / 1000);
   const leversText = player.leverIds.map(id => leverTitle(id)).join(' + ') || '(none)';
 
-  const summary =
+  const game_summary =
     `Scenario: ${s?.meta?.display_name || player.scenarioSlug}\n` +
     `Industry: ${s?.meta?.industry || 'n/a'}\n` +
     `Diagnosis: ${dxLabel}\n` +
@@ -779,17 +779,22 @@ function buildReflectionPayload() {
     `Outcome: ${currency}${mrr3K}K/mo @ 3mo → ${currency}${mrr12K}K/mo @ 12mo (baseline ${currency}${baselineK}K)`;
 
   return {
+    // Shared schema across d.MBA solo games — the EmailJS templates use these
+    // to render game-agnostic emails. Keeping the lever-specific fields
+    // alongside as escape hatches in case anyone wants to template against them.
     student_email: player.email,
-    scenario: s?.meta?.display_name || player.scenarioSlug,
-    diagnosis: dxLabel,
-    levers: leversText,
-    reasoning: player.reasoning,
-    summary,
+    game_name: GAME_NAME,
+    game_summary,
     confidence: document.getElementById('ref-confidence').value + '/10',
     takeaway: document.getElementById('ref-takeaway').value.trim(),
     application: document.getElementById('ref-application').value.trim(),
     surprise: document.getElementById('ref-surprise').value.trim(),
     other: document.getElementById('ref-other').value.trim() || '(none)',
+    // Lever-specific (kept for back-compat / per-game templating if ever wanted)
+    scenario: s?.meta?.display_name || player.scenarioSlug,
+    diagnosis: dxLabel,
+    levers: leversText,
+    reasoning: player.reasoning,
   };
 }
 
@@ -805,13 +810,6 @@ function submitReflection() {
   const btn = document.getElementById('ref-submit-btn');
   btn.disabled = true;
   btn.textContent = 'Sending…';
-
-  const adminTemplateUnset = EMAILJS_ADMIN_TEMPLATE.startsWith('TEMPLATE_ADMIN');
-  if (adminTemplateUnset) {
-    console.warn('EmailJS templates not yet configured. Payload would have been:', payload);
-    showSuccess();
-    return;
-  }
 
   emailjs.init(EMAILJS_PUBLIC_KEY);
   Promise.all([
