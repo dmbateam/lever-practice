@@ -783,6 +783,9 @@ function buildReflectionPayload() {
     // to render game-agnostic emails. Keeping the lever-specific fields
     // alongside as escape hatches in case anyone wants to template against them.
     student_email: player.email,
+    // Name where we ask for one, else the address - lets a single
+    // EmailJS subject line identify the sender for every game.
+    submitter: player.email,
     game_name: GAME_NAME,
     game_summary,
     confidence: document.getElementById('ref-confidence').value + '/10',
@@ -818,8 +821,8 @@ function submitReflection() {
   ])
     .then(() => showSuccess())
     .catch(err => {
-      console.error('Email send failed:', err);
-      // Show success anyway — the d.MBA pattern is to never block the player on a transient mail failure.
+      // Never block the player, but do not pretend it was delivered.
+      dmbaStashFailedSubmission(payload, err);
       showSuccess();
     });
 }
@@ -834,6 +837,40 @@ function playAgain() {
   buildScenarioGrid();
   showScreen('screen-pick');
 }
+
+// --- submission safety net (added) -----------------------------------------
+// A failed send used to be silent: the player saw the success screen and
+// nothing reached admin@d.mba, so a dropped submission was indistinguishable
+// from a student who never played. Keep the player unblocked, but keep a local
+// copy and tell them it needs re-sending.
+function dmbaStashFailedSubmission(payload, err) {
+  console.error('Email send failed:', err);
+  try {
+    var key = 'dmba_failed_submissions';
+    var queue = JSON.parse(localStorage.getItem(key) || '[]');
+    queue.push({ at: new Date().toISOString(), payload: payload });
+    localStorage.setItem(key, JSON.stringify(queue));
+  } catch (e) { /* private browsing - the on-screen notice still shows */ }
+  dmbaWarnSendFailed();
+}
+
+function dmbaWarnSendFailed() {
+  if (document.getElementById('dmba-send-warning')) return;
+  var note = document.createElement('p');
+  note.id = 'dmba-send-warning';
+  note.setAttribute('role', 'alert');
+  note.style.cssText = 'margin:16px auto;max-width:56ch;padding:12px 14px;' +
+    'border-radius:8px;background:#FBEEDA;border:1px solid #C89A3C;' +
+    'color:#5A3E06;font-size:14px;line-height:1.5;text-align:left';
+  note.textContent = "We couldn't send this to the d.MBA team just now. Your answers " +
+    "are saved in this browser. Please email admin@d.mba so we can record your " +
+    "submission, or come back to this page and submit again.";
+  var host = document.getElementById('ref-success')
+          || document.getElementById('screen-success')
+          || document.body;
+  host.appendChild(note);
+}
+
 </script>
 </body>
 </html>
